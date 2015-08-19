@@ -15,10 +15,10 @@ echo "Starting application configuration"
 sudo ${VENV_DIR}/bin/python ${SOURCE_DIR}/php/deploy.py install
 ${VENV_DIR}/bin/python ${SOURCE_DIR}/php/deploy.py environment
 
+sudo apt-get install php5-mysql -y
+
 wget http://wordpress.org/latest.zip
 unzip latest.zip
-
-echo php5-mysql > wordpress/requirements.apt
 
 sed "s/'database_name_here'/getenv('MYSQL_DATABASE_NAME')/; \
             s/'username_here'/getenv('MYSQL_USER')/; \
