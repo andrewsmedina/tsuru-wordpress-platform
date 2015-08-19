@@ -1,0 +1,29 @@
+#!/bin/bash -el
+
+# Copyright 2015 basebuilder authors. All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+echo "Deploying the PHP application..."
+
+APP_DIR=/home/application/current
+SOURCE_DIR=/var/lib/tsuru
+source ${SOURCE_DIR}/base/deploy
+
+# Deploying
+echo "Starting application configuration"
+sudo ${VENV_DIR}/bin/python ${SOURCE_DIR}/php/deploy.py install
+${VENV_DIR}/bin/python ${SOURCE_DIR}/php/deploy.py environment
+
+wget http://wordpress.org/latest.zip
+unzip latest.zip
+
+echo php5-mysql > wordpress/requirements.apt
+
+sed "s/'database_name_here'/getenv('MYSQL_DATABASE_NAME')/; \
+            s/'username_here'/getenv('MYSQL_USER')/; \
+            s/'localhost'/getenv('MYSQL_HOST')/; \
+            s/'password_here'/getenv('MYSQL_PASSWORD')/" \
+            wordpress/wp-config-sample.php  > wordpress/wp-config.php
+
+mv wordpress ${APP_DIR}
